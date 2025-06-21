@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: chartink-sm-dashboard
+    runtime: python
+    buildCommand: ""
+    startCommand: gunicorn dashboard:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11

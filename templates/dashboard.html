@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>📈 Chartink SM Bot Dashboard</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f9e79f;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+    header {
+      background-color: #f1c40f;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      font-size: 28px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .container {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .pnl {
+      font-size: 30px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #1e8449;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    button:hover {
+      background-color: #c0392b;
+    }
+    #log {
+      background: #fff8dc;
+      border: 2px solid #f39c12;
+      padding: 15px;
+      height: 400px;
+      overflow-y: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .log-entry {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-bottom: 1px solid #f7dc6f;
+    }
+    .log-entry span {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <header>📊 Chartink SM Bot Dashboard</header>
+  <div class="container">
+    <div class="pnl">Total P&L: ₹<span id="pnl">0</span></div>
+    <button onclick="stopBot()">🛑 Stop Bot</button>
+    <h2>Live Trade Log</h2>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    function fetchTrades() {
+      fetch("/api/trades")
+        .then(r => r.json())
+        .then(data => {
+          const log = document.getElementById("log");
+          log.innerHTML = "";
+          data.reverse().forEach(t => {
+            log.innerHTML += `
+              <div class="log-entry">
+                [<span>${t.time}</span>] 
+                <span>${t.stock}</span> → <b>${t.type}</b> @ ₹<span>${t.premium}</span> × <span>${t.qty}</span> 
+                <span style="float:right;color:#2980b9;">${t.status}</span>
+              </div>`;
+          });
+        });
+    }
+
+    function fetchPnL() {
+      fetch("/api/pnl")
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById("pnl").innerText = data.total.toFixed(2);
+        });
+    }
+
+    function stopBot() {
+      fetch("/api/stop", { method: "POST" })
+        .then(() => alert("✅ Bot has been stopped."));
+    }
+
+    setInterval(() => {
+      fetchTrades();
+      fetchPnL();
+    }, 5000);
+    fetchTrades();
+    fetchPnL();
+  </script>
+</body>
+</html>
