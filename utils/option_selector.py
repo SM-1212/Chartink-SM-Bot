@@ -1,25 +1,18 @@
-import random
-
-# Dummy premium simulator for test mode
-def fetch_dummy_premium(symbol, option_type, strike_price):
-    # Simulate premiums between ₹8 to ₹90 depending on the symbol
-    return round(random.uniform(8, 90), 2)
-
-def select_option(stock_symbol, option_type):
+def select_option_contract(stock_symbol, option_type, strike_offset):
+    """
+    Select a far ATM option contract (ATM - strike_offset).
+    Example: If ATM = 2500 and strike_offset = 4, return 2460 strike.
+    """
     try:
-        # Simulate ATM strike price
-        atm_strike = random.randrange(100, 2000, 10)
-        far_atm_strike = atm_strike - 4 * 10  # ATM - 4 strikes
+        # Dummy ATM value for testing; in production, fetch LTP from live NSE or Dhan
+        atm_strike = 2500
 
-        option_symbol = f"{stock_symbol}{far_atm_strike}{option_type}"
-        premium = fetch_dummy_premium(stock_symbol, option_type, far_atm_strike)
-
-        return {
-            "option_symbol": option_symbol,
-            "strike_price": far_atm_strike,
-            "premium": premium
-        }
-
+        if option_type.upper() == 'CALL':
+            selected_strike = atm_strike - (strike_offset * 10)
+            return f"{stock_symbol}{selected_strike}CE"
+        else:
+            selected_strike = atm_strike - (strike_offset * 10)
+            return f"{stock_symbol}{selected_strike}PE"
     except Exception as e:
-        print(f"⚠️ Error selecting option for {stock_symbol}: {e}")
+        print("Error in selecting option contract:", e)
         return None
