@@ -4,19 +4,16 @@ from bs4 import BeautifulSoup
 def get_chartink_stocks(screener_url):
     try:
         headers = {
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent": "Mozilla/5.0",
+            "Content-Type": "application/x-www-form-urlencoded"
         }
         response = requests.get(screener_url, headers=headers)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        stocks = []
+        soup = BeautifulSoup(response.text, "html.parser")
 
-        for row in soup.select("table#DataTables_Table_0 tbody tr"):
-            cols = row.find_all("td")
-            if cols:
-                symbol = cols[1].text.strip()
-                stocks.append(symbol.upper())
+        stock_tags = soup.select("table.table tr td a")
+        stocks = [tag.text.strip() for tag in stock_tags if tag.text.strip()]
+        return stocks[:10]  # Limit to top 10 stocks for safety
 
-        return stocks
     except Exception as e:
-        print(f"⚠️ Error fetching Chartink data: {e}")
+        print(f"Error fetching Chartink stocks: {e}")
         return []

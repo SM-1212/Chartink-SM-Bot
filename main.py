@@ -41,6 +41,7 @@ def execute_for(stock, opt_type):
 
     sl, tsl = calculate_sl_tsl(option["premium"])
     symbol, qty, prem = option["full_symbol"], option["lot_size"], option["premium"]
+
     place_dhan_order(symbol, "BUY", qty, sl, tsl)
 
     entry = {
@@ -58,7 +59,6 @@ def execute_for(stock, opt_type):
 
 def main():
     print("🚀 Bot started (watch dashboard for live status)…")
-    # Clear previous logs
     save_json(TRADE_LOG, [])
     save_json(PNL_SUM, {"total": 0})
 
@@ -67,13 +67,19 @@ def main():
             print("🛑 Stop-flag detected, exiting…")
             break
 
-        for stock in get_chartink_stocks(CALL_URL):
+        call_stocks = get_chartink_stocks(CALL_URL)
+        put_stocks = get_chartink_stocks(PUT_URL)
+
+        print(f"📈 CALL Candidates: {call_stocks}")
+        print(f"📉 PUT Candidates: {put_stocks}")
+
+        for stock in call_stocks:
             execute_for(stock, "CALL")
-        for stock in get_chartink_stocks(PUT_URL):
+        for stock in put_stocks:
             execute_for(stock, "PUT")
 
         print("✅ Wait 5 min before next scan…")
-        time.sleep(300)  # 5-minute interval
+        time.sleep(300)
 
 if __name__ == "__main__":
     main()
