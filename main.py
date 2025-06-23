@@ -78,8 +78,8 @@ def main():
         for stock in put_stocks:
             execute_for(stock, "PUT")
 
-        print("✅ Wait 5 min before next scan…")
-        time.sleep(300)
+        print("✅ Wait 30 sec before next scan…")
+        time.sleep(30)
 
 if __name__ == "__main__":
     main()
