@@ -29,10 +29,8 @@ def stop_bot():
         f.write("stop")
     return jsonify({"status": "stopped"})
 
-if __name__ == "__main__":
-    
 import os
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Get port from environment
-    app.run(host="0.0.0.0", port=port)        # Bind to 0.0.0.0 for Render
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
